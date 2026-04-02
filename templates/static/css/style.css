@@ -1,0 +1,125 @@
+body {
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Animations */
+.hero-animate {
+    animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.floating-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Navbar */
+.navbar {
+    backdrop-filter: blur(10px);
+    background-color: rgba(33, 37, 41, 0.95) !important;
+}
+
+/* Cards */
+.card {
+    border-radius: 16px;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+[data-bs-theme="dark"] .card:hover {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+/* Upload Dropzone */
+.upload-dropzone {
+    border: 2px dashed #0d6efd !important;
+    background-color: rgba(13, 110, 253, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: 16px;
+}
+
+.upload-dropzone:hover, .upload-dropzone.dragover {
+    background-color: rgba(13, 110, 253, 0.15);
+    border-color: #0a58ca !important;
+}
+
+[data-bs-theme="dark"] .upload-dropzone {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+[data-bs-theme="dark"] .upload-dropzone.dragover {
+    background-color: rgba(13, 110, 253, 0.25);
+}
+
+/* Sidebar Links */
+.list-group-item {
+    border-radius: 10px !important;
+    margin-bottom: 8px;
+    border: none;
+    transition: all 0.2s;
+}
+
+.list-group-item:hover {
+    transform: translateX(5px);
+}
+
+[data-bs-theme="dark"] .list-group-item {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .list-group-item.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Custom Gradients */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Preview iFrame */
+.preview-container {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+[data-bs-theme="dark"] .preview-container {
+    border-color: #444;
+}

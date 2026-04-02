@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Professional Upload Styling */
+    .upload-container {
+        position: relative;
+        z-index: 10;
+        animation: fadeUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+    
+    @keyframes fadeUp {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .premium-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    [data-bs-theme="dark"] .premium-card {
+        background: rgba(30, 30, 30, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .premium-header {
+        background: linear-gradient(to right, rgba(13, 110, 253, 0.05), rgba(102, 16, 242, 0.05));
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    [data-bs-theme="dark"] .premium-header {
+        background: linear-gradient(to right, rgba(13, 110, 253, 0.1), rgba(102, 16, 242, 0.1));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .form-floating-custom {
+        position: relative;
+    }
+    
+    .custom-input {
+        background-color: rgba(255, 255, 255, 0.5) !important;
+        border: 2px solid rgba(0,0,0,0.05) !important;
+        transition: all 0.3s ease;
+    }
+    
+    [data-bs-theme="dark"] .custom-input {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        border: 2px solid rgba(255,255,255,0.05) !important;
+        color: white !important;
+    }
+    
+    .custom-input:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+        background-color: transparent !important;
+    }
+    
+    .dropzone-professional {
+        border: 2px dashed rgba(13, 110, 253, 0.3) !important;
+        background: rgba(13, 110, 253, 0.02);
+        border-radius: 16px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dropzone-professional:hover, .dropzone-professional.dragover {
+        border-color: #0d6efd !important;
+        background: rgba(13, 110, 253, 0.08);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.15);
+    }
+    
+    [data-bs-theme="dark"] .dropzone-professional {
+        border-color: rgba(13, 110, 253, 0.4) !important;
+        background: rgba(13, 110, 253, 0.05);
+    }
+    
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(102,16,242,0.1));
+        color: #0d6efd;
+        margin: 0 auto;
+        transition: transform 0.3s ease;
+    }
+    
+    .dropzone-professional:hover .icon-circle {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, rgba(13,110,253,0.2), rgba(102,16,242,0.2));
+    }
+    
+    .btn-generate {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-generate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
+    }
+    
+    .btn-generate::after {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-20deg);
+        animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+        0% { left: -100%; }
+        20% { left: 200%; }
+        100% { left: 200%; }
+    }
+    
+    /* Ambient glow behind card */
+    .ambient-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(13,110,253,0.15) 0%, rgba(0,0,0,0) 70%);
+        z-index: -1;
+        pointer-events: none;
+    }
+</style>
+
+<div class="row justify-content-center upload-container py-5 position-relative">
+    <div class="ambient-glow"></div>
+    <div class="col-md-10 col-lg-8 col-xl-7">
+        
+        <div class="text-center mb-5" data-aos="fade-down">
+            <h1 class="fw-bolder display-5 mb-3 text-dark tracking-tight" style="letter-spacing: -1px;">
+                Upload your <span class="text-primary">Vision</span>
+            </h1>
+            <p class="text-secondary lead mx-auto" style="max-width: 500px;">
+                Bring your ideas to life. Drop your sketch below and let our AI engine synthesize the architecture.
+            </p>
+        </div>
+
+        <div class="premium-card" data-aos="fade-up" data-aos-delay="100">
+            <!-- Header Section -->
+            <div class="premium-header p-4 px-md-5 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded p-2 me-3 d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-wand-magic-sparkles fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Initialization Setup</h5>
+                        <div class="small text-muted fw-medium">Configure project parameters</div>
+                    </div>
+                </div>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold hover-lift">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
+            
+            <!-- Body Section -->
+            <div class="p-4 p-md-5">
+                <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+                    
+                    <!-- Input Wrapper -->
+                    <div class="mb-5 position-relative">
+                        <label class="form-label fw-bold text-dark mb-2 ms-1" style="font-size: 0.9rem;">
+                            <i class="fa-solid fa-tag text-muted me-2"></i> Project Identifier
+                        </label>
+                        <input type="text" name="title" class="form-control form-control-lg custom-input rounded-4 px-4 py-3" placeholder="e.g., E-Commerce Checkout Dashboard" required>
+                        <div class="form-text text-muted mt-2 ms-2 small">This identifier will be used as the namespace for generated source files.</div>
+                    </div>
+                    
+                    <!-- Dropzone -->
+                    <div class="mb-5">
+                        <label class="form-label fw-bold text-dark mb-2 ms-1" style="font-size: 0.9rem;">
+                            <i class="fa-solid fa-file-image text-muted me-2"></i> Source Wireframe
+                        </label>
+                        
+                        <div class="dropzone-professional p-5 text-center mt-2 w-100" id="dropzone">
+                            <!-- Hidden File Input -->
+                            <input type="file" name="sketch" id="fileInput" class="position-absolute w-100 h-100 opacity-0 top-0 start-0 z-2" style="cursor: pointer;" accept="image/png, image/jpeg, image/jpg" required>
+                            
+                            <!-- Default State -->
+                            <div id="dropzoneContent" class="d-flex flex-column align-items-center justify-content-center flex-grow-1" style="pointer-events: none;">
+                                <div class="icon-circle mb-4 shadow-sm">
+                                    <i class="fa-solid fa-cloud-arrow-up fs-2"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-2">Drag & Drop your sketch here</h4>
+                                <p class="text-muted mb-3 fw-medium">or click to browse from your device</p>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3 py-1 fw-normal">Max Size: 16MB</span>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3 py-1 fw-normal">PNG, JPG, JPEG</span>
+                                </div>
+                            </div>
+
+                            <!-- Preview State -->
+                            <div id="previewContainer" class="d-none position-relative z-1 w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                <div class="position-relative d-inline-block">
+                                    <img id="imagePreview" src="" class="img-fluid rounded-4 shadow-sm border border-secondary border-opacity-25" style="max-height: 280px; object-fit: contain;">
+                                    <div class="position-absolute top-0 end-0 m-2 bg-dark bg-opacity-75 text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; backdrop-filter: blur(4px);">
+                                        <i class="fa-solid fa-check fs-6"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-4 px-4 py-2 bg-primary bg-opacity-10 text-primary fw-semibold rounded-pill border border-primary border-opacity-25 d-inline-flex align-items-center">
+                                    <i class="fa-solid fa-arrows-rotate me-2"></i> Click or drag a new image to replace
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="button" id="submitBtn" class="btn btn-generate btn-lg w-100 rounded-pill text-white shadow-lg d-flex align-items-center justify-content-center py-3 px-4 fs-5 fw-bold mt-2">
+                        <span>Initialize AI Processing</span> 
+                        <i class="fa-solid fa-arrow-right ms-3" style="transition: transform 0.2s;"></i>
+                    </button>
+                    
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const dropzoneContent = document.getElementById('dropzoneContent');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('uploadForm');
+
+        // Drag and Drop Effects
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, e => {
+                if(eventName === 'drop') e.preventDefault();
+                dropzone.classList.remove('dragover');
+            }, false);
+        });
+
+        // Handle File Selection
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Validate file type
+                if (!file.type.match('image.*')) {
+                    alert("Please upload a valid image file (PNG, JPG)");
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Hide empty state
+                    dropzoneContent.classList.add('d-none');
+                    dropzoneContent.classList.remove('d-flex');
+                    
+                    // Show preview state
+                    previewContainer.classList.remove('d-none');
+                    previewContainer.classList.add('d-flex');
+                    
+                    // Set image
+                    imagePreview.src = e.target.result;
+                    
+                    // Add success animation to container
+                    dropzone.style.borderColor = '#198754';
+                    dropzone.style.backgroundColor = 'rgba(25, 135, 84, 0.05)';
+                    
+                    // Reset styling on hover if image exists
+                    setTimeout(() => {
+                        dropzone.style.borderColor = '';
+                        dropzone.style.backgroundColor = '';
+                    }, 1000);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle Submit Button effects
+        submitBtn.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('i');
+            if(icon && !this.classList.contains('disabled')) {
+                icon.style.transform = 'translateX(5px)';
+            }
+        });
+        
+        submitBtn.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('i');
+            if(icon && !this.classList.contains('disabled')) {
+                icon.style.transform = 'translateX(0)';
+            }
+        });
+
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Trigger native HTML5 validation
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // Check if file is selected
+            if (!fileInput.files || fileInput.files.length === 0) {
+                // Shake dropzone to indicate error
+                dropzone.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => dropzone.style.animation = 'none', 500);
+                form.reportValidity();
+                return;
+            }
+
+            // Change state to loading
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-3" role="status" aria-hidden="true"></span> Synthesizing Architecture...';
+            this.classList.add('disabled', 'opacity-75');
+            this.style.pointerEvents = 'none';
+            
+            // Small artificial delay for animation to play before browser freeze during upload
+            setTimeout(() => {
+                form.submit();
+            }, 300);
+        });
+        
+        // Add shake animation logic
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+{% endblock %}

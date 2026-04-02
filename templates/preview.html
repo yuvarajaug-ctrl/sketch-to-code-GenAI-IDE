@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="hero-animate">
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 ps-2 border-start border-4 border-primary">
+        <div class="mb-3 mb-md-0">
+            <h2 class="fw-bolder mb-1 text-dark">{{ project.title }}</h2>
+            <p class="text-muted small mb-0"><i class="fa-regular fa-clock me-1"></i> AI Output Generated {{
+                project.created_at }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('main.dashboard') }}"
+                class="btn btn-outline-secondary rounded-pill px-4 fw-semibold shadow-sm"><i
+                    class="fa-solid fa-cubes me-2"></i>My Workspace</a>
+            <a href="{{ url_for('main.upload') }}" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm"><i
+                    class="fa-solid fa-plus me-1"></i> New</a>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+        <div class="col-xl-5">
+            <div class="card shadow-sm border-0 h-100 rounded-4 overflow-hidden">
+                <div
+                    class="card-header bg-dark text-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-pen-nib me-2 text-primary"></i>Source Sketch</h6>
+                    <span class="badge bg-secondary rounded-pill">Input Tensor</span>
+                </div>
+                <div class="card-body p-0 d-flex flex-column align-items-center justify-content-center bg-light"
+                    style="min-height: 50vh;">
+                    <img src="{{ url_for('static', filename='uploads/' + project.sketch_image_path) }}"
+                        class="img-fluid p-4"
+                        style="object-fit: contain; max-height: 500px; width: 100%; border-radius: 20px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-7">
+            <div class="card shadow-sm border-0 h-100 rounded-4 overflow-hidden">
+                <div
+                    class="card-header bg-primary text-white border-0 py-2 px-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
+                    <h6 class="mb-3 mb-sm-0 fw-bold d-flex align-items-center"><i
+                            class="fa-solid fa-code text-warning me-2 fs-5"></i>Generated Artifacts</h6>
+                    <ul class="nav nav-pills border-0 bg-white bg-opacity-10 rounded-pill p-1 shadow-sm" role="tablist"
+                        style="font-size: 0.9rem;">
+                        <li class="nav-item me-1">
+                            <a class="nav-link active text-white rounded-pill px-3 py-1 fw-semibold d-flex align-items-center"
+                                data-bs-toggle="pill" href="#preview"><i class="fa-solid fa-desktop me-2"></i> Live
+                                Interface</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white rounded-pill px-3 py-1 fw-semibold d-flex align-items-center"
+                                data-bs-toggle="pill" href="#code"><i class="fa-solid fa-file-code me-2"></i> Raw
+                                Code</a>
+                        </li>
+                        <li class="nav-item ms-1">
+                            <a class="nav-link text-white rounded-pill px-3 py-1 fw-semibold d-flex align-items-center"
+                                data-bs-toggle="pill" href="#java"><i class="fa-brands fa-java me-2"></i> Java Code</a>
+                        </li>
+                        <li class="nav-item ms-1">
+                            <a class="nav-link text-white rounded-pill px-3 py-1 fw-semibold d-flex align-items-center bg-danger bg-opacity-75"
+                                data-bs-toggle="pill" href="#canvas-mode"><i class="fa-solid fa-pen-ruler me-2"></i> Edit UI</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body tab-content p-0 h-100 bg-light position-relative">
+                    
+                    <!-- SPINNER OVERLAY for live updating -->
+                    <div id="loading-overlay" class="d-none position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75" style="z-index:100; align-items:center; justify-content:center;">
+                        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                    </div>
+                    <!-- PREVIEW TAB -->
+                    <div class="tab-pane fade show active h-100" id="preview">
+                        <div class="preview-container h-100 m-3 m-md-4 shadow-sm bg-white position-relative"
+                            style="border-radius: 12px;">
+                            <!-- Browser Mock Header -->
+                            <div class="position-absolute top-0 start-0 w-100 bg-secondary bg-opacity-10 border-bottom p-2 d-flex align-items-center"
+                                style="height: 48px; border-radius: 12px 12px 0 0;">
+                                <div class="d-flex gap-2 ms-2">
+                                    <div class="rounded-circle bg-danger" style="width: 14px; height: 14px;"></div>
+                                    <div class="rounded-circle bg-warning" style="width: 14px; height: 14px;"></div>
+                                    <div class="rounded-circle bg-success" style="width: 14px; height: 14px;"></div>
+                                </div>
+                                <div class="bg-white rounded ms-3 px-3 py-1 shadow-sm text-muted small user-select-none d-flex align-items-center mx-auto"
+                                    style="width: 60%; font-size: 0.8rem;">
+                                    <i class="fa-solid fa-lock text-success me-2"></i> localhost:8000/preview
+                                </div>
+                            </div>
+                            <!-- Live Content -->
+                            <iframe id="preview-frame" class="w-100"
+                                style="height: calc(100% - 48px); margin-top: 48px; min-height: 450px; border: none; background: #fff; border-radius: 0 0 12px 12px;"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- CODE TAB -->
+                    <div class="tab-pane fade h-100" id="code" style="background-color: #1e1e1e;">
+                        <div class="d-flex flex-column h-100">
+                            <!-- Action Bar -->
+                            <div
+                                class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary border-opacity-25 bg-dark">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-success rounded-pill px-3"
+                                        onclick="copyCode('html-editor')"><i class="fa-solid fa-copy me-1"></i> Copy
+                                        HTML</button>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                        onclick="copyCode('css-editor')"><i class="fa-solid fa-copy me-1"></i> Copy
+                                        CSS</button>
+                                </div>
+                                <button class="btn btn-sm btn-warning rounded-pill px-4 fw-bold shadow"
+                                    onclick="updatePreview()"><i class="fa-solid fa-play me-1"></i> Run Preview</button>
+                            </div>
+
+                            <div class="flex-grow-1 overflow-hidden p-3 d-flex flex-column gap-3">
+                                <div class="h-50 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-secondary fw-bold text-uppercase"><i
+                                                class="fa-brands fa-html5 text-danger me-1"></i> index.html</small>
+                                    </div>
+                                    <textarea id="html-editor"
+                                        class="form-control bg-dark text-success border-secondary border-opacity-25 flex-grow-1 font-monospace"
+                                        style="font-size: 0.85rem; resize: none; opacity: 0.9;">{{ project.generated_html }}</textarea>
+                                </div>
+
+                                <div class="h-50 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-secondary fw-bold text-uppercase"><i
+                                                class="fa-brands fa-css3-alt text-primary me-1"></i> style.css</small>
+                                    </div>
+                                    <textarea id="css-editor"
+                                        class="form-control bg-dark text-info border-secondary border-opacity-25 flex-grow-1 font-monospace"
+                                        style="font-size: 0.85rem; resize: none; opacity: 0.9;">{{ project.generated_css }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JAVA TAB -->
+                    <div class="tab-pane fade h-100" id="java" style="background-color: #1e1e1e;">
+                        ... existing java tab code kept similar below ...
+                        <div class="d-flex flex-column h-100">
+                            <!-- Action Bar -->
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary border-opacity-25 bg-dark">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-warning rounded-pill px-3" onclick="copyCode('java-editor')"><i class="fa-solid fa-copy me-1"></i> Copy Java</button>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden p-3 d-flex flex-column gap-3">
+                                <div class="h-100 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-secondary fw-bold text-uppercase"><i class="fa-brands fa-java text-warning me-1"></i> GeneratedUI.java</small>
+                                    </div>
+                                    <pre id="java-editor" class="form-control bg-dark text-warning border-secondary border-opacity-25 flex-grow-1 font-monospace mb-0" style="font-size: 0.85rem; opacity: 0.9; white-space: pre-wrap; overflow-y: auto;"><code>{{ project.generated_java }}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CANVAS TAB -->
+                    <div class="tab-pane fade h-100" id="canvas-mode">
+                        <div class="h-100 m-3 m-md-4 d-flex flex-column">
+                            <div class="toolbar bg-white p-2 rounded shadow-sm mb-3 d-flex gap-2 flex-wrap align-items-center">
+                                <h6 class="mb-0 fw-bold px-2 border-end me-1">Add Element:</h6>
+                                <div class="input-group input-group-sm mb-0 flex-grow-1" style="max-width: 300px;">
+                                    <input type="text" id="add-element-search" class="form-control" list="available-elements" placeholder="Search element to add...">
+                                    <datalist id="available-elements">
+                                        <option value="Textbox"></option>
+                                        <option value="Button"></option>
+                                        <option value="Checkbox"></option>
+                                        <option value="Radio"></option>
+                                        <option value="Dropdown"></option>
+                                        <option value="List"></option>
+                                        <option value="Header"></option>
+                                        <option value="Paragraph"></option>
+                                        <option value="Image"></option>
+                                    </datalist>
+                                    <button class="btn btn-primary" onclick="addSearchedElement()"><i class="fa-solid fa-plus"></i> Add</button>
+                                </div>
+                                <div class="ms-auto pe-2">
+                                    <select id="canvas-page-type" class="form-select form-select-sm" onchange="triggerLiveUpdate()">
+                                        <option value="form" {% if project.page_type == 'form' %}selected{% endif %}>Form Layout</option>
+                                        <option value="login" {% if project.page_type == 'login' %}selected{% endif %}>Login Page</option>
+                                        <option value="signup" {% if project.page_type == 'signup' %}selected{% endif %}>Signup Page</option>
+                                        <option value="dashboard" {% if project.page_type == 'dashboard' %}selected{% endif %}>Dashboard Layout</option>
+                                        <option value="landing" {% if project.page_type == 'landing' %}selected{% endif %}>Landing Page</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded shadow-sm flex-grow-1 overflow-auto position-relative border" style="min-height: 400px; padding: 2rem;">
+                                <div class="text-center text-muted small mb-3"><i class="fa-solid fa-up-down me-1"></i> Drag to reorder elements</div>
+                                <div id="canvas-container" class="d-flex flex-column gap-3 w-100 mx-auto" style="max-width: 400px;">
+                                    <!-- Elements rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+    let appElements = {{ elements | tojson | safe }};
+    let projectId = {{ project.id }};
+    function updatePreview() {
+        const html = document.getElementById('html-editor').value;
+        const css = document.getElementById('css-editor').value;
+        const iframe = document.getElementById('preview-frame');
+
+        const bootstrap = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
+        const googleFonts = '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">';
+        const fontAwesome = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">';
+
+        const combined = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                ${bootstrap}
+                ${googleFonts}
+                ${fontAwesome}
+                <style>
+                    body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+                    ${css}
+                </style>
+            </head>
+            <body>
+                ${html}
+            </body>
+            </html>
+        `;
+
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(combined);
+        doc.close();
+
+        // Switch back to preview tab if they are in code tab
+        // const previewTab = new bootstrap.Tab(document.querySelector('a[href="#preview"]'));
+        // previewTab.show();
+    }
+
+    // Canvas Editor Logic
+    
+    function addSearchedElement() {
+        const val = document.getElementById('add-element-search').value.toLowerCase();
+        let type = '';
+        if (val.includes('text')) type = 'textbox';
+        else if (val.includes('button')) type = 'button';
+        else if (val.includes('check')) type = 'checkbox';
+        else if (val.includes('radio')) type = 'radio';
+        else if (val.includes('drop') || val.includes('select')) type = 'dropdown';
+        else if (val.includes('list')) type = 'list';
+        else if (val.includes('head') || val.includes('title')) type = 'header';
+        else if (val.includes('para')) type = 'paragraph';
+        else if (val.includes('image') || val.includes('img')) type = 'image';
+        
+        if (type) {
+            addCanvasElement(type);
+            document.getElementById('add-element-search').value = '';
+        } else {
+            alert("Element type not recognized. Please select from the list.");
+        }
+    }
+
+    function renderCanvas() {
+        const container = document.getElementById('canvas-container');
+        container.innerHTML = '';
+        
+        if (!appElements || appElements.length === 0) {
+            container.innerHTML = '<div class="text-center text-muted p-5 bg-light rounded border-dashed">Canvas is empty. Add elements above!</div>';
+            return;
+        }
+
+        appElements.forEach((el, index) => {
+            const div = document.createElement('div');
+            div.className = 'canvas-el bg-light border rounded p-2 d-flex align-items-center shadow-sm position-relative';
+            div.dataset.index = index;
+            div.style.cursor = 'grab';
+            
+            let icon = 'fa-font text-primary';
+            if (el.type === 'button') icon = 'fa-hand-pointer text-success';
+            else if (el.type === 'checkbox') icon = 'fa-check-square text-info';
+            else if (el.type === 'radio') icon = 'fa-circle-dot text-warning';
+            else if (el.type === 'list') icon = 'fa-list text-dark';
+            else if (el.type === 'dropdown') icon = 'fa-caret-down text-secondary';
+            else if (el.type === 'header') icon = 'fa-heading text-danger';
+            else if (el.type === 'paragraph') icon = 'fa-paragraph text-muted';
+            else if (el.type === 'image') icon = 'fa-image text-secondary';
+            
+            div.innerHTML = `
+                <i class="fa-solid fa-grip-vertical text-muted me-3 fs-5"></i>
+                <i class="fa-solid ${icon} me-2 fs-5"></i>
+                <input type="text" class="form-control form-control-sm border-0 bg-white shadow-none me-2 fw-semibold" 
+                       value="${el.label}" 
+                       onchange="updateCanvasElement(${index}, this.value)">
+                <span class="badge bg-secondary ms-auto me-3">${el.type}</span>
+                <button class="btn btn-sm btn-danger px-2 position-absolute" style="right: -10px; top: -10px; border-radius: 50%; opacity: 0; transition: opacity 0.2s" onclick="deleteCanvasElement(${index})">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            `;
+            
+            // Add hover effect for delete button
+            div.addEventListener('mouseenter', () => div.querySelector('.btn-danger').style.opacity = '1');
+            div.addEventListener('mouseleave', () => div.querySelector('.btn-danger').style.opacity = '0');
+            
+            container.appendChild(div);
+        });
+
+        // Initialize Sortable
+        if(window.canvasSortable) window.canvasSortable.destroy();
+        window.canvasSortable = new Sortable(container, {
+            animation: 150,
+            handle: '.fa-grip-vertical',
+            onEnd: function (evt) {
+                // reorder appElements
+                const itemEl = appElements.splice(evt.oldIndex, 1)[0];
+                appElements.splice(evt.newIndex, 0, itemEl);
+                triggerLiveUpdate();
+            },
+        });
+    }
+
+    function addCanvasElement(type) {
+        let defaultLabel = 'New Element';
+        if (type === 'textbox') defaultLabel = 'Input Field';
+        if (type === 'button') defaultLabel = 'Submit Button';
+        if (type === 'checkbox') defaultLabel = 'Check this box';
+        if (type === 'radio') defaultLabel = 'Radio Option';
+        if (type === 'list') defaultLabel = 'List Title';
+        if (type === 'dropdown') defaultLabel = 'Select Option';
+        if (type === 'header') defaultLabel = 'Header Text';
+        if (type === 'paragraph') defaultLabel = 'Paragraph text here...';
+        if (type === 'image') defaultLabel = 'Placeholder Image';
+        
+        appElements.push({
+            id: 'el_' + Date.now(),
+            type: type,
+            label: defaultLabel
+        });
+        renderCanvas();
+        triggerLiveUpdate();
+    }
+
+    function updateCanvasElement(index, newLabel) {
+        appElements[index].label = newLabel;
+        triggerLiveUpdate();
+    }
+
+    function deleteCanvasElement(index) {
+        appElements.splice(index, 1);
+        renderCanvas();
+        triggerLiveUpdate();
+    }
+
+    function triggerLiveUpdate() {
+        document.getElementById('loading-overlay').classList.replace('d-none', 'd-flex');
+        
+        const pageType = document.getElementById('canvas-page-type').value;
+        
+        fetch('/api/generate_code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                project_id: projectId,
+                elements: appElements,
+                page_type: pageType
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('html-editor').value = data.html;
+            document.getElementById('css-editor').value = data.css;
+            document.getElementById('java-editor').innerHTML = `<code>${data.java.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`;
+            updatePreview();
+            setTimeout(() => {
+                document.getElementById('loading-overlay').classList.replace('d-flex', 'd-none');
+            }, 300);
+        })
+        .catch(err => {
+            console.error("Live update error:", err);
+            document.getElementById('loading-overlay').classList.replace('d-flex', 'd-none');
+        });
+    }
+
+    function copyCode(id) {
+        const element = document.getElementById(id);
+        let textToCopy = '';
+        
+        if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+            element.select();
+            textToCopy = element.value;
+        } else {
+            textToCopy = element.innerText || element.textContent;
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Copied!';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-outline-success', 'btn-outline-primary', 'btn-outline-warning');
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                if (id === 'html-editor') btn.classList.add('btn-outline-success');
+                else if (id === 'css-editor') btn.classList.add('btn-outline-primary');
+                else btn.classList.add('btn-outline-warning');
+            }, 2000);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        updatePreview();
+        renderCanvas();
+
+        // Ensure iframe stays responsive
+        window.addEventListener('resize', () => {
+            const iframe = document.getElementById('preview-frame');
+            iframe.style.height = iframe.parentElement.offsetHeight - 48 + 'px';
+        });
+    });
+</script>
+<style>
+    #html-editor::-webkit-scrollbar,
+    #css-editor::-webkit-scrollbar,
+    #java-editor::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #html-editor::-webkit-scrollbar-thumb,
+    #css-editor::-webkit-scrollbar-thumb,
+    #java-editor::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 10px;
+    }
+
+    #html-editor:focus,
+    #css-editor:focus,
+    #java-editor:focus {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+        outline: none;
+    }
+</style>
+{% endblock %}

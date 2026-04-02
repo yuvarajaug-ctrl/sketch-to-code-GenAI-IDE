@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row hero-animate">
+    <div class="col-lg-3 mb-4 mb-lg-0">
+        <div class="card shadow-sm border-0 sticky-top rounded-4" style="top: 100px;">
+            <div class="card-body p-4 text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-user-shield fs-2"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-dark">System Admin</h5>
+                <p class="text-muted small mb-4">Master View Privileges</p>
+                <hr class="opacity-10 mb-4">
+                <div class="list-group list-group-flush text-start border-0 gap-2">
+                    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action active rounded-pill fw-semibold border-0 shadow-sm"><i class="fa-solid fa-server me-2"></i> Hub Overview</a>
+                    <a href="{{ url_for('admin.manage_dataset') }}" class="list-group-item list-group-item-action rounded-pill fw-semibold border-0 text-secondary bg-light"><i class="fa-solid fa-layer-group me-2"></i> AI Dataset Matrix</a>
+                </div>
+                <hr class="opacity-10 mt-4 mb-4">
+                <form action="{{ url_for('admin.train_model') }}" method="POST">
+                    <button type="submit" class="btn btn-dark w-100 rounded-pill shadow-sm py-2 px-3 fw-bold d-flex align-items-center justify-content-center gap-2 template-train-btn">
+                        <i class="fa-solid fa-microchip text-primary"></i> <span>Execute Training</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 ps-2 border-start border-4 border-primary">
+            <div class="mb-2 mb-sm-0 ms-2">
+                <h2 class="fw-bolder mb-1 text-dark">Data Architecture Hub</h2>
+                <p class="text-muted mb-0 small"><i class="fa-solid fa-chart-line me-1"></i> Core platform analytics and real-time generation counts.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill shadow-sm">
+                    <i class="fa-solid fa-check-circle me-1"></i> GPU Online
+                </span>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="card shadow border-0 h-100 rounded-4 position-relative overflow-hidden bg-primary text-white">
+                    <div class="position-absolute end-0 top-0 opacity-10 p-3 h-100 overflow-hidden" style="transform: rotate(15deg) scale(1.5);">
+                        <i class="fa-solid fa-users display-1"></i>
+                    </div>
+                    <div class="card-body p-4 position-relative z-1 d-flex flex-column justify-content-between">
+                        <p class="text-uppercase fw-bold text-white-50 small tracking-wide mb-2"><i class="fa-regular fa-id-badge me-2"></i>Total Accounts</p>
+                        <h2 class="display-3 fw-bolder mb-0 text-white">{{ users_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow border-0 h-100 rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #1e2024, #121212); color: white;">
+                    <div class="position-absolute end-0 top-0 opacity-10 p-3 h-100 overflow-hidden" style="transform: rotate(-10deg) scale(1.3);">
+                        <i class="fa-solid fa-object-ungroup display-1"></i>
+                    </div>
+                    <div class="card-body p-4 position-relative z-1 d-flex flex-column justify-content-between">
+                        <p class="text-uppercase fw-bold text-white-50 small tracking-wide mb-2"><i class="fa-solid fa-robot me-2"></i>Generations Run</p>
+                        <h2 class="display-3 fw-bolder mb-0 text-white">{{ projects_count }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+            <h5 class="fw-bolder mb-4 text-dark"><i class="fa-solid fa-network-wired text-primary me-2"></i> Environment Health Diagnostics</h5>
+            <div class="row text-center mt-3 g-4">
+                <div class="col-md-4">
+                    <div class="border rounded-4 p-4 border-opacity-50 shadow-sm bg-light transition-all card-hover">
+                        <div class="bg-white rounded-circle d-inline-flex p-3 shadow-sm mb-3">
+                            <i class="fa-solid fa-memory text-primary fs-3"></i>
+                        </div>
+                        <h6 class="fw-bold text-muted text-uppercase small">RAM Usage</h6>
+                        <div class="fs-3 fw-bolder text-dark mb-1">3.8 GB</div> 
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill"><i class="fa-solid fa-arrow-down-short-wide me-1"></i> Stable</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-4 p-4 border-opacity-50 shadow-sm bg-light transition-all card-hover">
+                        <div class="bg-white rounded-circle d-inline-flex p-3 shadow-sm mb-3">
+                            <i class="fa-solid fa-database text-info fs-3"></i>
+                        </div>
+                        <h6 class="fw-bold text-muted text-uppercase small">DB Schema Node</h6>
+                        <div class="fs-3 fw-bolder text-dark mb-1">102 MB</div> 
+                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill"><i class="fa-solid fa-arrow-up-short-wide me-1"></i> + 4MB Today</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-4 p-4 border-opacity-50 shadow-sm bg-light transition-all card-hover">
+                        <div class="bg-white rounded-circle d-inline-flex p-3 shadow-sm mb-3">
+                            <i class="fa-solid fa-bolt text-warning fs-3"></i>
+                        </div>
+                        <h6 class="fw-bold text-muted text-uppercase small">Inference Latency</h6>
+                        <div class="fs-3 fw-bolder text-dark mb-1">2.4<span class="fs-6 text-muted ms-1">sec</span></div> 
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill"><i class="fa-solid fa-check me-1"></i> Optimum</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; cursor: default; }
+</style>
+{% endblock %}

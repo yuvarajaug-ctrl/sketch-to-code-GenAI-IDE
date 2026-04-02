@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Custom hero animations and effects */
+    .hero-section {
+        position: relative;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+    
+    .bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: -1;
+        animation: shapeMove 15s infinite alternate ease-in-out;
+    }
+    
+    .bg-shape-1 {
+        width: 400px;
+        height: 400px;
+        background: rgba(13, 110, 253, 0.15); /* Primary blue */
+        top: -10%;
+        left: -10%;
+    }
+    
+    .bg-shape-2 {
+        width: 500px;
+        height: 500px;
+        background: rgba(102, 16, 242, 0.15); /* Purple */
+        bottom: -20%;
+        right: -10%;
+        animation-delay: -5s;
+    }
+
+    [data-bs-theme="dark"] .bg-shape-1 { background: rgba(13, 110, 253, 0.25); }
+    [data-bs-theme="dark"] .bg-shape-2 { background: rgba(102, 16, 242, 0.25); }
+    
+    @keyframes shapeMove {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(50px, 30px) scale(1.1); }
+        100% { transform: translate(-30px, -50px) scale(0.9); }
+    }
+    
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    [data-bs-theme="dark"] .glass-card {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .hero-title {
+        font-weight: 800;
+        letter-spacing: -2px;
+        line-height: 1.1;
+    }
+
+    .feature-badge {
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+    
+    .feature-badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2);
+    }
+
+    /* Gravity Fall Effect */
+    .gravity-fall {
+        animation: fallDown 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
+        pointer-events: none;
+        z-index: 1000;
+        transform-origin: center center;
+    }
+    
+    @keyframes fallDown {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        20% { transform: translateY(-30px) rotate(-5deg); opacity: 1; }
+        100% { transform: translateY(1500px) rotate(45deg); opacity: 0; }
+    }
+    
+    /* Magnetic Hover Interaction */
+    .magnetic {
+        transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+        display: inline-block;
+        cursor: pointer;
+    }
+    
+    .interactive-float {
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    .interactive-float-reverse {
+        animation: float 5s ease-in-out infinite reverse;
+    }
+</style>
+
+<div class="hero-section">
+    <!-- Animated Background Shapes -->
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+
+    <div class="container position-relative z-1 pt-4 pb-5">
+        <div class="row align-items-center g-5">
+            <!-- Left Content: Text & CTA -->
+            <div class="col-lg-6">
+                <!-- Badge -->
+                <div data-aos="fade-down" data-aos-delay="100">
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-4 py-2 mb-4 d-inline-flex align-items-center shadow-sm feature-badge magnetic gravity-target" style="font-size: 0.9rem;">
+                        <span class="spinner-grow spinner-grow-sm me-2 text-primary" role="status" aria-hidden="true"></span>
+                        <span class="fw-semibold">AI-Powered Code Engine v2.0</span>
+                    </span>
+                </div>
+                
+                <!-- Main Heading -->
+                <h1 class="display-3 hero-title mb-4 text-dark" data-aos="fade-up" data-aos-delay="200">
+                    Transform Sketches into <br> 
+                    <span class="text-gradient position-relative d-inline-block">
+                        Working UI
+                        <svg class="position-absolute w-100 start-0 bottom-0 translate-middle-y" style="height: 12px; z-index: -1;" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path d="M0 10 Q 50 20 100 10" fill="none" stroke="rgba(13, 110, 253, 0.3)" stroke-width="8" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </h1>
+                
+                <!-- Subheading -->
+                <p class="lead text-secondary mb-5 pe-lg-4 lh-lg" style="font-size: 1.25rem;" data-aos="fade-up" data-aos-delay="300">
+                    Upload your hand-drawn wireframes and let the <strong>Sketch2Code GenAI IDE</strong> convert them instantly into clean, structured HTML5, Bootstrap 5, and Java Spring code.
+                </p>
+                
+                <!-- CTA Buttons -->
+                <div class="d-flex flex-column flex-sm-row gap-3" data-aos="fade-up" data-aos-delay="400">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg rounded-pill shadow-lg px-5 py-3 d-flex align-items-center justify-content-center fw-bold text-white transition-all hover-lift">
+                        Start Building Free <i class="fa-solid fa-arrow-right-long ms-2"></i>
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-5 py-3 d-flex align-items-center justify-content-center fw-semibold hover-lift">
+                        <i class="fa-regular fa-user me-2"></i> Sign In
+                    </a>
+                </div>
+                
+                <!-- Feature Checkmarks -->
+                <div class="mt-5 text-muted fw-medium d-flex flex-wrap gap-4 align-items-center small" data-aos="fade-in" data-aos-delay="600">
+                    <div class="d-flex align-items-center"><i class="fa-solid fa-bolt text-warning fs-5 me-2"></i> Instant Preview</div>
+                    <div class="d-flex align-items-center"><i class="fa-brands fa-java text-danger fs-5 me-2"></i> Spring Boot Ready</div>
+                    <div class="d-flex align-items-center"><i class="fa-brands fa-bootstrap text-purple fs-5 me-2" style="color: #7952b3;"></i> Bootstrap 5.3</div>
+                </div>
+            </div>
+            
+            <!-- Right Content: Interactive/Animated Visual -->
+            <div class="col-lg-6 mt-5 mt-lg-0 text-center position-relative">
+                <div class="p-4" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="glass-card text-white p-5 position-relative overflow-hidden text-start gravity-target magnetic">
+                        <!-- Decorative background icon -->
+                        <div class="position-absolute top-0 end-0 p-4 opacity-10" style="transform: rotate(15deg) scale(2);">
+                            <i class="fa-solid fa-layer-group display-1"></i>
+                        </div>
+                        
+                        <div class="position-relative z-1">
+                            <!-- Animated Code Elements inside Card -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+                                <div class="d-flex gap-2">
+                                    <span class="rounded-circle bg-danger" style="width: 12px; height: 12px;"></span>
+                                    <span class="rounded-circle bg-warning" style="width: 12px; height: 12px;"></span>
+                                    <span class="rounded-circle bg-success" style="width: 12px; height: 12px;"></span>
+                                </div>
+                                <span class="badge bg-secondary bg-opacity-25 text-white rounded-pill px-3 py-1 fw-normal font-monospace small">AI Processing Engine</span>
+                            </div>
+                            
+                            <h3 class="fw-bold mb-3 d-flex align-items-center gap-3">
+                                <div class="bg-primary bg-gradient rounded shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fa-solid fa-microchip text-white fs-4"></i>
+                                </div>
+                                <span class="text-dark" data-bs-theme="dark">Intelligent Detection</span>
+                            </h3>
+                            
+                            <p class="text-secondary mb-4 lh-base">
+                                Our sophisticated PyTorch ResNet models analyze geometric shapes and handwriting, routing spatial layouts explicitly into an attention-based sequence generator.
+                            </p>
+                            
+                            <!-- Animated Pulse Line to simulate processing -->
+                            <div class="position-relative rounded overflow-hidden mb-2 shadow-inner" style="height: 6px; background: rgba(0,0,0,0.1);">
+                                <div class="position-absolute h-100 bg-gradient-primary rounded" style="width: 40%; animation: processBar 2.5s infinite ease-in-out;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted small fw-medium font-monospace">
+                                <span>sketches_uploaded.jpg</span>
+                                <span>Generating Code...</span>
+                            </div>
+                        </div>
+                        
+                        <style>
+                            @keyframes processBar {
+                                0% { left: -40%; width: 40%; }
+                                50% { left: 30%; width: 100%; }
+                                100% { left: 100%; width: 40%; }
+                            }
+                            
+                            .hover-lift { transition: transform 0.2s; }
+                            .hover-lift:hover { transform: translateY(-3px); }
+                            
+                            /* Ensure text-dark overrides properly on light theme for the glass card contents */
+                            html[data-bs-theme="light"] .glass-card h3 span { color: #212529 !important; }
+                            html[data-bs-theme="dark"] .glass-card h3 span { color: #f8f9fa !important; }
+                        </style>
+                    </div>
+                </div>
+                
+                <!-- Floating badges around the card -->
+                <div class="position-absolute interactive-float magnetic gravity-target" style="top: 10%; right: 0; z-index: 2;" data-aos="fade-left" data-aos-delay="700">
+                    <div class="glass-card py-2 px-3 d-flex align-items-center gap-2 rounded-pill shadow-sm">
+                        <i class="fa-brands fa-html5 text-orange fs-4" style="color: #e34f26;"></i>
+                        <span class="fw-bold text-dark" style="font-size: 0.85rem;">HTML5</span>
+                    </div>
+                </div>
+                
+                <div class="position-absolute interactive-float-reverse magnetic gravity-target" style="bottom: 15%; left: -5%; z-index: 2;" data-aos="fade-right" data-aos-delay="800">
+                    <div class="glass-card py-2 px-3 d-flex align-items-center gap-2 rounded-pill shadow-sm">
+                        <i class="fa-brands fa-css3-alt text-primary fs-4"></i>
+                        <span class="fw-bold text-dark" style="font-size: 0.85rem;">CSS3</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section (Animation Showcase) -->
+<div class="container py-5 mt-5">
+    <div class="text-center mb-5 pb-3">
+        <h2 class="display-6 fw-bold mb-3" data-aos="fade-up">From Paper to Production</h2>
+        <p class="text-secondary lead mx-auto" style="max-width: 600px;" data-aos="fade-up" data-aos-delay="100">Experience a magical workflow that turns your creative ideas into structured application code.</p>
+    </div>
+    
+    <div class="row g-4 pt-3">
+        <!-- Step 1 -->
+        <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="100">
+            <div class="card h-100 p-4 glass-card text-center border-0 shadow-sm">
+                <div class="mx-auto rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-pen-nib fs-2 text-primary"></i>
+                </div>
+                <h4 class="fw-bold mb-3">1. Sketch IT</h4>
+                <p class="text-secondary mb-0">Draw your wireframes on paper or a whiteboard. Capture all your UI elements and structure.</p>
+            </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="200">
+            <div class="card h-100 p-4 glass-card text-center border-0 shadow-sm position-relative">
+                <!-- Connecting line for desktop -->
+                <div class="position-absolute top-50 start-0 translate-middle-y w-100 d-none d-md-block" style="height: 2px; background: dashed 2px rgba(13, 110, 253, 0.2); z-index: -1; left: -50% !important; width: 50% !important;"></div>
+                
+                <div class="mx-auto rounded-circle bg-warning bg-opacity-10 d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-cloud-arrow-up fs-2 text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-3">2. Upload & Detect</h4>
+                <p class="text-secondary mb-0">Our AI identifies buttons, text boxes, and layouts, allowing you to review & edit detected elements.</p>
+            </div>
+        </div>
+        <!-- Step 3 -->
+        <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="300">
+            <div class="card h-100 p-4 glass-card text-center border-0 shadow-sm position-relative">
+                <div class="position-absolute top-50 start-0 translate-middle-y w-100 d-none d-md-block" style="height: 2px; background: dashed 2px rgba(13, 110, 253, 0.2); z-index: -1; left: -50% !important; width: 50% !important;"></div>
+                
+                <div class="mx-auto rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-laptop-code fs-2 text-success"></i>
+                </div>
+                <h4 class="fw-bold mb-3">3. Generate Code</h4>
+                <p class="text-secondary mb-0">Get fully responsive HTML/CSS and backend Java Spring code ready to be deployed instantly.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Magnetic Interaction ---
+        const magnetics = document.querySelectorAll('.magnetic');
+        
+        magnetics.forEach((magnet) => {
+            magnet.addEventListener('mousemove', (e) => {
+                const pos = magnet.getBoundingClientRect();
+                const x = e.clientX - pos.left - pos.width / 2;
+                const y = e.clientY - pos.top - pos.height / 2;
+                
+                // Strength of the magnetic pull
+                const pullX = x * 0.3;
+                const pullY = y * 0.3;
+                
+                magnet.style.transform = `translate(${pullX}px, ${pullY}px) scale(1.05)`;
+            });
+            
+            magnet.addEventListener('mouseleave', () => {
+                // Return smoothly to original position
+                magnet.style.transform = `translate(0px, 0px) scale(1)`;
+            });
+        });
+        
+        // --- Gravity Fall Effect ---
+        const fallTargets = document.querySelectorAll('.gravity-target');
+        
+        fallTargets.forEach((target) => {
+            target.addEventListener('click', function(e) {
+                // Prevent navigation if it's a link to animate first, though these are mostly graphical
+                if(target.tagName.toLowerCase() === 'a' && target.getAttribute('href') !== '#') {
+                    e.preventDefault();
+                    this.classList.add('gravity-fall');
+                    setTimeout(() => {
+                        window.location.href = target.getAttribute('href');
+                    }, 800);
+                } else {
+                    // Start removing animation classes that conflict
+                    this.classList.remove('interactive-float');
+                    this.classList.remove('interactive-float-reverse');
+                    this.style.animation = 'none'; // Clear inline animations if any
+                    
+                    // Trigger reflow to restart animation clearly
+                    void this.offsetWidth;
+                    
+                    this.classList.add('gravity-fall');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
