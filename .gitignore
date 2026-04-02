@@ -1,0 +1,33 @@
+# Environment
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+
+# Databases
+*.db
+site.db
+sketch2code.db
+
+# Uploads (user files - not tracked)
+static/uploads/
+templates/static/uploads/
+
+# Dataset sketches (large binary files, optional)
+# dataset/sketches/
+
+# Git LFS handles .pth files, but exclude if not using LFS
+# trained_models/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
