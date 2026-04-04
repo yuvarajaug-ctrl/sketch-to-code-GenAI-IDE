@@ -3,7 +3,7 @@
 ## Features
 - **Backend:** Flask
 - **DB:** MySQL
-- **Mock AI:** ResNet50 + FPN & Seq2Seq
+- **Mock AI:** ResNet50 + FPN & Seq2Seq + Tescers OCR
 
 ## Run
 1. `pip install -r requirements.txt`
