@@ -1,116 +1,73 @@
 # 📘 Sketch2Code: Complete System Documentation
 
-Welcome to the comprehensive guide for **Sketch2Code**. This document provides an in-depth look at the architecture, modules, and workflows that enable hand-drawn sketches to be converted into functional code.
+Welcome to the comprehensive guide for **Sketch2Code**. This document provides an in-depth look at the architecture, modules, and workflows that enable hand-drawn sketches to be converted into functional code for both Web and Desktop platforms.
 
 ---
 
 ## 1. 🏗️ System Architecture Overview
 
-Sketch2Code follows a **Micro-Service-inspired Monolithic Architecture** with a clear separation of concerns between the Web Server, AI Pipeline, and Data Management layer.
+Sketch2Code follows a hybrid architecture combining modular web services with advanced AI inference.
 
-### Conversion Pipeline: How It Works
+### The Conversion & Editing Pipeline
 
-1. **Input Stage:** The user uploads a hand-drawn sketch (PNG/JPG).
-2. **Preprocessing (OpenCV):**
-   - Grayscale conversion and Gaussian Blurring.
-   - Canny Edge Detection and Contour extraction.
-   - Identifying Regions Of Interest (ROIs).
-3. **Advanced Detection (Fast R-CNN / Seq2Seq):**
-   - Custom PyTorch-based detection for complex UI layouts.
-   - Attention-based Seq2Seq models for generating structured mappings.
-4. **OCR & Keyword Mapping (PyTesseract):**
-   - High-precision OCR on detected ROIs.
-   - Classification using `MEANINGFUL_LABELS` (e.g., "Enter Email", "Login Button").
-5. **Generative Mapping (Google Gemini API):**
-   - Metadata (coordinates, text, labels) is sent to Gemini as a fallback/enhancement.
-   - Context-aware generation of semantic HTML and CSS.
-6. **Code Assembly:** Final code is stitched together and saved to the database.
+1. **Detection (AI/CV):** Raw sketches are processed via OpenCV and PyTorch models to identify UI components.
+2. **Standardization:** Detected elements are mapped to a high-level UI schema (JSON).
+3. **Interactive Refinement (IDE):**
+   - **Canvas Mode:** Users can visually refine the AI's output.
+   - **Real-Time API:** Any change on the visual canvas triggers `/api/generate_code`, which uses Gemini and local engines to rebuild the source artifacts.
+4. **Multi-Target Generation:**
+   - **Web Target:** Semantic HTML5 and Bootstrap-driven CSS3.
+   - **Desktop Target:** Native Java Swing source code.
 
 ---
 
-## 2. 🔌 Backend Modules (Python/Flask)
+## 2. 🖌️ The Interactive IDE (Frontend)
 
-The backend is built using **Flask 3.0.0** and modularized via Blueprints.
+The Sketch2Code IDE is designed for maximum developer productivity.
 
-| File / Directory | Responsibility |
-| :--- | :--- |
-| `app.py` | Initializer: Configures Flask, secret keys, and registers blueprints. |
-| `config.py` | Configuration management (MySQL, Gemini API, Upload folders). |
-| `routes/auth.py` | Handles User Registration, Login (using password hashing), and Session management. |
-| `routes/main.py` | The main engine: Orchestrates project creation, sketch uploads, and conversion trigger. |
-| `routes/admin.py` | Admin-only interface for dataset management and model performance monitoring. |
-| `inference.py` | **The Brain:** Coordinates OpenCV, PyTesseract, and ML models for the end-to-end conversion. |
-| `database/db.py` | DBAL (Database Abstraction Layer) for safe MySQL/SQLite operations. |
+### ✨ Visual Canvas Editor
+The **Canvas Mode** transforms the detected elements into a list of interactive components.
+- **Drag-and-Drop Reordering:** Using `Sortable.js`, users can physically rearrange the UI structure.
+- **Dynamic Element Insertion:** Add new components like Radio Buttons, Dropdowns, or Images via a search-able toolbar.
+- **Label Editing:** Change textbox labels or button text directly on the canvas with instant feedback.
+- **Layout Presets:** Switch between "Login", "Signup", "Dashboard", and "Landing" modes to apply layout-specific generation rules.
 
-### Key Code Snippet: The Detection Logic (inference.py)
-The pipeline uses a hybrid method ensuring high reliability even with poor-quality sketches:
-```python
-def generate_code_from_sketch(image_path: str):
-    # 1. OpenCV-based ROI Detection
-    rois = detect_shapes(image_path)
-    
-    # 2. Text Extraction via OCR
-    kw_data = ocr_service.associate_text_with_elements(image_path, rois)
-    
-    # 3. Model-based Refinement
-    # (Optional) Refine layout using PyTorch-trained weights
-    
-    # 4. Multi-Format Code Generation
-    html, css = build_html(kw_data)
-    java = build_java(kw_data)
-    
-    return html, css, java
-```
+### ⚡ Easy Live Preview
+The IDE features a dual-view system:
+- **IFrame Preview:** An isolated browser container that renders the code exactly as it would appear in production.
+- **Twin Code Editors:** Integrated manual editors for HTML and CSS with auto-sync capabilities.
 
 ---
 
-## 3. 🎨 Frontend Implementation
+## 3. ☕ Cross-Platform Code Generation
 
-The frontend is a modern SPA-like (Single Page Application) experience within a Jinja2 multi-page setup.
+Unlike standard tools, Sketch2Code generates valid source code for two distinct ecosystems:
 
-- **Framework:** Bootstrap 5.3.
-- **Interactivity:**
-  - **AOS (Animate On Scroll):** Provides smooth entry animations for dashboard components.
-  - **Prism.js:** Integrated into the "IDE Preview" for syntax highlighting of generated code.
-  - **Live Preview:** An `<iframe>`-based viewer that renders generated HTML/CSS in real-time.
-- **Theme Support:** Native Light/Dark mode implementation with persistent state (LocalStorage).
+### Web Platform (HTML/CSS)
+- **Framework:** Responsive Bootstrap 5.
+- **Design:** Modern typography (Inter) and custom glassmorphic styling.
+- **Features:** Form validation hooks and interactive button states.
 
----
-
-## 4. 🧠 Deep Learning Models (PyTorch)
-
-Located in the `models/` directory, these provide the semantic intelligence for the system.
-
-- **`detector.py`:** A convolutional neural network (CNN) designed to detect UI components (Buttons vs. Textboxes) regardless of drawing style.
-- **`seq2seq.py`:** An Encoder-Decoder model with an **Attention Mechanism**.
-  - **Encoder:** GRU-based, captures the spatial relationships between detected elements.
-  - **Decoder:** Generates valid code sequences (DSL) that are later mapped to HTML.
-- **`dataset.py`:** Custom PyTorch Dataset loader for training on the `dataset/` directory.
+### Desktop Platform (Java Swing)
+- **Language:** Pure Java.
+- **Engine:** `services/keyword_engine.py` builds robust `JFrame`/`JPanel` hierarchies.
+- **Architecture:** Generates a full `GeneratedUI.java` controller class that can be compiled and run as a standalone desktop application.
 
 ---
 
-## 5. 🗄️ Database Schema
+## 4. 🧠 Deep Learning & AI Modules
 
-The system uses **MySQL** (Relational) with the following schema:
-
-- **`users`:** Manages authentication and roles (`user` vs. `admin`).
-- **`projects`:** Stores sketch metadata, binary image paths, and JSON/Text blobs for generated code.
-- **`datasets`:** Tracks administrative uploads for retraining the AI models.
+- **Custom Inference (`inference.py`):** Orchestrates the hand-off between OpenCV shape detection and GenAI mapping.
+- **Gemini GenAI Integration:** Uses advanced prompts to translate visual hierarchies into clean, maintainable code.
+- **Seq2Seq with Attention:** A recursive model used to predict the "next logical element" in a UI flow based on patterns in the training data.
 
 ---
 
-## 6. 🚀 Deployment & Production
+## 5. 🗄️ Database & Deployment
 
-The project is structured for high availability:
-- **Procfile:** Configured for Heroku/Gunicorn.
-- **Gunicorn:** Handles concurrent worker processes for CPU-intensive AI inference.
-- **Environment Variables:** All secrets (DB passwords, API keys) are managed via `.env` to ensure security.
-
-### Deploy Command:
-```bash
-gunicorn --workers 4 --timeout 120 --bind 0.0.0.0:$PORT app:app
-```
+- **MySQL Schema:** Robust handling of project versioning and user-specific datasets.
+- **Production Ready:** Environment-aware config and Gunicorn support for high-concurrency AI processing.
 
 ---
 
-*This documentation is automatically generated and updated as part of the Sketch2Code project lifecycle.*
+*This document serves as the technical blueprint for the Sketch2Code ecosystem.*

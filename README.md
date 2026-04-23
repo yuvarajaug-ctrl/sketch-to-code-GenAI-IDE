@@ -1,6 +1,6 @@
 # 🎨 Sketch2Code GenAI IDE
 
-**Sketch2Code** is an advanced AI-powered platform that transforms hand-drawn UI sketches into production-ready front-end and back-end code. By combining Computer Vision, OCR, and Large Language Models, it automates the transition from design to development.
+**Sketch2Code** is a revolutionary AI-powered platform that transforms hand-drawn UI sketches into production-ready front-end and back-end code. It features a high-fidelity Visual Canvas for real-time editing and multi-platform output generation.
 
 [![FastAPI](https://img.shields.io/badge/Backend-Flask-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
 [![MySQL](https://img.shields.io/badge/Database-MySQL-blue?style=for-the-badge&logo=mysql)](https://www.mysql.com/)
@@ -11,40 +11,42 @@
 
 ## 🚀 Key Features
 
-- **Intuitive Sketch Upload:** Simply upload a photo of your UI wireframe.
-- **AI-Powered Detection:** Automatically detects UI components like Inputs, Buttons, Checkboxes, and Headings.
-- **Multi-Code Generation:**
-  - **Front-End:** Modern Responsive HTML5 & CSS3.
-  - **Back-End:** Java Swing Controller logic.
-- **Real-Time Preview:** Built-in IDE to view and test generated code instantly.
-- **Admin Dashboard:** Manage datasets, monitor training, and optimize models.
-- **Hybrid Pipeline:** Robust OCR-driven keyword detection combined with Gemini GenAI fallback for complex layouts.
+### 🖌️ Visual Canvas & Interactive IDE
+- **Visual UI Editor:** A powerful "Canvas Mode" allowing you to add, remove, and reorder elements (Buttons, Textboxes, Dropdowns, etc.) using simple drag-and-drop.
+- **Easy Live Preview:** Experience instant code rendering. As you modify elements on the canvas, the system builds the corresponding code in real-time.
+- **Integrated Code Editor:** Twin-panel editor for manual HTML and CSS fine-tuning with instant "Run Preview" capabilities.
+
+### 🖥️ Cross-Platform Code Generation
+- **Modern Web Output:** Produces semantic HTML5 and responsive CSS3 utilizing Bootstrap 5.
+- **Desktop Application Logic:** Automatically generates **Java Swing (Pure Java)** code for building desktop GUI counterparts of your sketches.
+- **Dynamic Formatting:** Choose between various page types like Login, Signup, Dashboard, and Landing layouts.
+
+### 🧠 Intelligent Detection Pipeline
+- **AI-Driven Recognition:** High-accuracy detection of UI components from raw sketches using custom Computer Vision models.
+- **Contextual Generation:** Combines keyword-driven OCR with Google Gemini GenAI to understand the *intent* behind the sketch.
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **Bootstrap 5 & AOS:** Modern, responsive design with smooth animations.
-- **Prism.js:** Syntax highlighting for the generated code.
-- **Custom IDE UI:** Integrated code editor and live preview panel.
+### Frontend & IDE
+- **Bootstrap 5 & AOS:** Modern, premium design with smooth micro-animations.
+- **Sortable.js:** Enables fluid drag-and-drop reordering on the visual canvas.
+- **Prism.js:** Professional-grade syntax highlighting for all generated languages.
 
-### Backend
-- **Flask (Python):** Scalable and flexible web framework.
-- **MySQL:** Relational database for user and project management.
-- **Gunicorn:** Production-ready WSGI server.
-
-### AI/ML Pipeline
-- **OpenCV:** Regional analysis and bounding box detection.
-- **PyTesseract (OCR):** High-accuracy text extraction from sketches.
-- **PyTorch:** Custom Faster R-CNN and Seq2Seq with Attention models.
-- **Google Gemini API:** Generative AI for structural mapping and advanced code generation.
+### Backend & AI
+- **Flask (Python):** The backbone for API routing and project management.
+- **AI Engine:**
+  - **OpenCV:** Regional analysis and ROI detection.
+  - **PyTesseract (OCR):** Fine-grained text extraction.
+  - **PyTorch:** Custom Faster R-CNN and Seq2Seq architectures.
+  - **Google Gemini API:** Generative AI for structural mapping and advanced code generation.
 
 ---
 
 ## 📖 Complete Documentation
 
-For detailed information on the system architecture, module logic, and database schema, please refer to the:
+For detailed information on the system architecture, module logic, and database schema:
 - [**System Documentation (project_documentation.md)**](file:///z:/s2c/project_documentation.md)
 - [**Deployment Guide (Procfile)**](file:///z:/s2c/Procfile)
 
@@ -71,42 +73,14 @@ For detailed information on the system architecture, module logic, and database 
    ```
 
 3. **Configure Environment:**
-   Create a `.env` file based on your credentials:
    ```env
-   SECRET_KEY=your_secret_key
-   MYSQL_HOST=localhost
-   MYSQL_USER=root
-   MYSQL_PASSWORD=your_password
-   MYSQL_DB=sketch2code_db
    GEMINI_API_KEY=your_gemini_api_key
+   MYSQL_PASSWORD=your_password
+   # ... other settings in .env
    ```
 
-4. **Initialize Database:**
-   ```bash
-   mysql -u root -p < database/schema.sql
-   ```
-
-5. **Run the Application:**
-   ```bash
-   python app.py
-   ```
-   Visit `http://localhost:8000/` in your browser.
-
----
-
-## 📂 Project Structure
-
-```text
-├── app.py              # Main Entry Point
-├── inference.py        # AI Pipeline Orchestrator
-├── requirements.txt    # Project Dependencies
-├── database/           # DB Schema & Connectivity
-├── routes/             # Web Blueprints (Auth, Admin, Main)
-├── services/           # Logic (OCR, AI Generator, Engines)
-├── models/             # PyTorch Architectures
-├── static/             # Styles, Scripts, and UI Assets
-└── templates/          # HTML Templates
-```
+4. **Run:**
+   `python app.py` -> Visit `http://localhost:8000/`
 
 ---
 
